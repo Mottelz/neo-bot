@@ -1,0 +1,11 @@
+{
+  "name": "neo",
+  "packageManager": "yarn@4.10.3",
+  "dependencies": {
+    "discord.js": "^14.22.1",
+    "dotenv": "^17.2.3"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

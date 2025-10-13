@@ -1,7 +1,7 @@
 module.exports = {
 	apps: [
 		{
-			name: 'goe-bot',
+			name: 'neo-bot',
 			script: 'index.js',
 			watch: false,
 		},

@@ -6,7 +6,7 @@ const parseDeck = (decklist) => {
 			.filter(line => line.startsWith('# ('))
 			.join('\n');
 		const deck_code = split_str.filter(line => !line.startsWith('#') && line.length > 0);
-		return cards + '\n\n' + deck_code[0];
+		return cards + '\n#\n' + deck_code[0];
 	}
 	catch (error) {
 		console.error('Error parsing decklist string:', error);

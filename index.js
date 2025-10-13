@@ -4,7 +4,7 @@ dotenv.config();
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const parseDeck = require('./parseDeck');
 
-const TOKEN = process.env.BOT_TOKEN; // Replace with your bot token
+const TOKEN = process.env.NEO_BOT_TOKEN; // Replace with your bot token
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,

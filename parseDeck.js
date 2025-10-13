@@ -4,7 +4,6 @@ const parseDeck = (decklist) => {
 		const split_str = decklist.split(splitter);
 		const cards = split_str
 			.filter(line => line.startsWith('# ('))
-			// .map(line => line.replace(/^# /, ''))
 			.join('\n');
 		const deck_code = split_str.filter(line => !line.startsWith('#') && line.length > 0);
 		return cards + '\n\n' + deck_code[0];

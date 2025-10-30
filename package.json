@@ -1,9 +1,9 @@
 {
   "name": "neo",
-  "packageManager": "yarn@4.10.3",
   "dependencies": {
     "discord.js": "^14.22.1",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "snapdeck": "1.1.0"
   },
   "scripts": {
     "start": "node index.js"

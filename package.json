@@ -1,9 +1,9 @@
 {
   "name": "neo",
   "dependencies": {
-    "discord.js": "^14.22.1",
+    "discord.js": "^14.25.1",
     "dotenv": "^17.2.3",
-    "snapdeck": "2.1.0"
+    "snapdeck": "2.4.6"
   },
   "scripts": {
     "start": "node index.js"

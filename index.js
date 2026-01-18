@@ -32,7 +32,7 @@ client.on('messageCreate', async (message) => {
 		if (!displayDeck) return;
 
 		await message.delete();
-		await message.channel.send(`Here's the deck <@${message.author.id}> shared:\n\`\`\`${displayDeck}\`\`\`\nTap here on mobile:\n\`${deckcode.deckcode}\``);
+		await message.channel.send(`Here's the deck <@${message.author.id}> shared:\n\`\`\`${displayDeck}\`\`\`\nTap here on mobile:\n\`${Buffer.from(deckcode.deckcode).toString('base64')}\``);
 
 	} catch (err) {
 		console.log(`error processing: ${message.content}\n${err}`);

@@ -28,11 +28,26 @@ client.on('messageCreate', async (message) => {
 		const deck = await snapdeck.parseDeckcode(deckcode);
 		if (!deck) return;
 
-		const displayDeck = await snapdeck.generateDisplayString(deck.cards);
+		const displayDeck = await snapdeck.generateSimplifiedDisplayString(deck.cards);
 		if (!displayDeck) return;
 
+		const shortcode = snapdeck.getDeckCode(deck);
+		if (!shortcode) return;
+
+		// Same rule extractDeckcode uses to identify deckcode lines
+		const isDeckcodeLine = (line) => !line.trim().startsWith('#') && !line.trim().includes(' ') && line.trim().length > 0;
+		const lines = message.content.split('\n');
+		const firstDeckcodeLine = lines.findIndex(isDeckcodeLine);
+		const before = lines.slice(0, firstDeckcodeLine).join('\n').trim();
+		const after = lines.slice(firstDeckcodeLine).filter((line) => !isDeckcodeLine(line)).join('\n').trim();
+
 		await message.delete();
-		await message.channel.send(`Here's the deck <@${message.author.id}> shared:\n\`\`\`${displayDeck}\`\`\`\nTap here on mobile:\n\`${Buffer.from(deckcode.deckcode).toString('base64')}\``);
+		await message.channel.send(
+			`<@${message.author.id}> shared:\n` +
+			(before ? `${before}\n` : '') +
+			`${displayDeck}\n Deckcode:\n\`${shortcode}\`` +
+			(after ? `\n${after}` : '')
+		);
 
 	} catch (err) {
 		console.log(`error processing: ${message.content}\n${err}`);

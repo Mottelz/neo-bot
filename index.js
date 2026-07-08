@@ -34,12 +34,29 @@ client.on('messageCreate', async (message) => {
 		const shortcode = snapdeck.getDeckCode(deck);
 		if (!shortcode) return;
 
-		// Same rule extractDeckcode uses to identify deckcode lines
+
 		const isDeckcodeLine = (line) => !line.trim().startsWith('#') && !line.trim().includes(' ') && line.trim().length > 0;
 		const lines = message.content.split('\n');
-		const firstDeckcodeLine = lines.findIndex(isDeckcodeLine);
-		const before = lines.slice(0, firstDeckcodeLine).join('\n').trim();
-		const after = lines.slice(firstDeckcodeLine).filter((line) => !isDeckcodeLine(line)).join('\n').trim();
+		const codeLine = lines.findIndex(isDeckcodeLine);
+		let boilerplateLine = -1;
+		for (let i = codeLine + 1; i < lines.length; i++) {
+			const trimmed = lines[i].trim();
+			if (!trimmed.startsWith('#')) break;
+			if (trimmed !== '#') {
+				boilerplateLine = i;
+				break;
+			}
+		}
+		const isDeckLine = (line, i) => {
+			const trimmed = line.trim();
+			return /^#\s*\(\d+\)\s+\S/.test(trimmed)
+				|| trimmed === '#'
+				|| i === boilerplateLine
+				|| isDeckcodeLine(line);
+		};
+		const firstDeckLine = lines.findIndex(isDeckLine);
+		const before = lines.slice(0, firstDeckLine).join('\n').trim();
+		const after = lines.slice(firstDeckLine).filter((line, i) => !isDeckLine(line, firstDeckLine + i)).join('\n').trim();
 
 		await message.delete();
 		await message.channel.send(

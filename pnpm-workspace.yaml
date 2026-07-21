@@ -1,2 +1,2 @@
 minimumReleaseAgeExclude:
-  - snapdeck@2.5.1
+  - snapdeck@2.5.1 || 2.5.3

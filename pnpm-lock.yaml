@@ -15,8 +15,8 @@ importers:
         specifier: ^17.3.1
         version: 17.3.1
       snapdeck:
-        specifier: 2.5.1
-        version: 2.5.1
+        specifier: 2.5.3
+        version: 2.5.3
 
 packages:
 
@@ -93,8 +93,8 @@ packages:
   magic-bytes.js@1.13.0:
     resolution: {integrity: sha512-afO2mnxW7GDTXMm5/AoN1WuOcdoKhtgXjIvHmobqTD1grNplhGdv3PFOyjCVmrnOZBIT/gD/koDKpYG+0mvHcg==}
 
-  snapdeck@2.5.1:
-    resolution: {integrity: sha512-L7euZh5DuYV2fJBYx0v0FLub+7X6UTD2S1Z846lihGob5jFkUQLNCfcyvU9Fw9P4AAq7tYD+rn4VnI+T8M4oYg==}
+  snapdeck@2.5.3:
+    resolution: {integrity: sha512-+Zw0V1dkF7vlItjPCvZ8E1GJkdqat6u8NSnH27Kq4Hvpm01l9TtVz5Myi/4uKDWS2auNyfi4EjV0+cQrotYTLQ==}
     engines: {node: '>=18'}
 
   ts-mixer@6.0.4:
@@ -223,7 +223,7 @@ snapshots:
 
   magic-bytes.js@1.13.0: {}
 
-  snapdeck@2.5.1: {}
+  snapdeck@2.5.3: {}
 
   ts-mixer@6.0.4: {}
 

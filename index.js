@@ -22,7 +22,11 @@ client.on('messageCreate', async (message) => {
 	if (message.author.bot) return;
 
 	try {
-		const deckcode = snapdeck.extractDeckcode(message.content);
+		// Some Snap exports arrive as a single line with literal "\n"
+		// sequences instead of real newlines — normalize them first.
+		const content = message.content.replace(/\\n/g, '\n');
+
+		const deckcode = snapdeck.extractDeckcode(content);
 		if (!deckcode) return;
 
 		const deck = await snapdeck.parseDeckcode(deckcode);
@@ -41,7 +45,7 @@ client.on('messageCreate', async (message) => {
 			const trimmed = line.trim();
 			return !trimmed.startsWith('#') && !trimmed.includes(' ') && trimmed.length > 0;
 		};
-		const lines = message.content.split('\n');
+		const lines = content.split('\n');
 
 		// The Snap export is one contiguous block: card lines, bare `#` lines,
 		// the deckcode, then the (possibly multi-line, non-English) boilerplate.

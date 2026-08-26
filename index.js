@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const snapdeck = require('snapdeck');
 
 const TOKEN = process.env.NEO_BOT_TOKEN; // Replace with your bot token
@@ -61,16 +61,49 @@ client.on('messageCreate', async (message) => {
 		const before = blockStart >= 0 ? lines.slice(0, blockStart).join('\n').trim() : '';
 		const after = blockStart >= 0 ? lines.slice(blockEnd + 1).join('\n').trim() : '';
 
-		await message.delete();
-		await message.channel.send(
-			`<@${message.author.id}> shared:\n` +
-			(before ? `${before}\n\n` : '') +
-			`\`\`\`\n${displayDeck}\n\`\`\`\n Deckcode:\n\`${shortcode}\`` +
-			(after ? `\n${after}` : '')
+		// The sharer's id rides in the customId, so ownership needs no storage.
+		const deleteRow = new ActionRowBuilder().addComponents(
+			new ButtonBuilder()
+				.setCustomId(`delete-deck:${message.author.id}`)
+				.setLabel('Delete')
+				.setStyle(ButtonStyle.Danger)
 		);
+
+		await message.delete();
+		await message.channel.send({
+			content:
+				`<@${message.author.id}> shared:\n` +
+				(before ? `${before}\n\n` : '') +
+				`\`\`\`\n${displayDeck}\n\`\`\`\n Deckcode:\n\`${shortcode}\`` +
+				(after ? `\n${after}` : ''),
+			components: [deleteRow]
+		});
 
 	} catch (err) {
 		console.log(`error processing: ${message.content}\n${err}`);
+	}
+});
+
+client.on('interactionCreate', async (interaction) => {
+	if (!interaction.isButton()) return;
+
+	const [action, ownerId] = interaction.customId.split(':');
+	if (action !== 'delete-deck') return;
+
+	try {
+		if (interaction.user.id !== ownerId) {
+			await interaction.reply({
+				content: 'Only the person who shared this deck can delete it.',
+				flags: MessageFlags.Ephemeral
+			});
+			return;
+		}
+
+		// Acknowledge before deleting, or Discord shows "interaction failed".
+		await interaction.deferUpdate();
+		await interaction.message.delete();
+	} catch (err) {
+		console.log(`error handling delete button: ${err}`);
 	}
 });
 

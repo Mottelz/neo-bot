@@ -14,8 +14,18 @@ const client = new Client({
 	partials: [Partials.Message, Partials.Channel, Partials.Reaction]
 });
 
-client.on('clientReady', () => {
+const PRIVACY_POLICY_URL = 'https://gobattles.gg/privacy';
+
+client.on('clientReady', async () => {
 	console.log(`Logged in as ${client.user.tag}`);
+
+	try {
+		await client.application.commands.set([
+			{ name: 'info', description: 'About this bot and its privacy policy' }
+		]);
+	} catch (err) {
+		console.log(`error registering commands: ${err}`);
+	}
 });
 
 client.on('messageCreate', async (message) => {
@@ -58,7 +68,12 @@ client.on('messageCreate', async (message) => {
 			if (isCommentLine(lines[i]) || isDeckcodeLine(lines[i])) blockEnd = i;
 			else break;
 		}
-		const before = blockStart >= 0 ? lines.slice(0, blockStart).join('\n').trim() : '';
+		// Text typed before pasting can share a line with the first card line;
+		// keep only the typed part so that card doesn't leak into the repost.
+		const beforeLines = blockStart >= 0 ? lines.slice(0, blockStart) : [];
+		const lead = beforeLines.length ? beforeLines.at(-1).match(/^(.*?)\s*#\s*\(\d+\)\s+\S/) : null;
+		if (lead) beforeLines[beforeLines.length - 1] = lead[1];
+		const before = beforeLines.join('\n').trim();
 		const after = blockStart >= 0 ? lines.slice(blockEnd + 1).join('\n').trim() : '';
 
 		// The sharer's id rides in the customId, so ownership needs no storage.
@@ -85,6 +100,21 @@ client.on('messageCreate', async (message) => {
 });
 
 client.on('interactionCreate', async (interaction) => {
+	if (interaction.isChatInputCommand() && interaction.commandName === 'info') {
+		try {
+			await interaction.reply({
+				content:
+					`**${client.user.username}** cleans up Marvel Snap deck exports: ` +
+					'paste a deck from the game and it reposts a tidy card list and deckcode.\n' +
+					`Privacy policy: ${PRIVACY_POLICY_URL}`,
+				flags: MessageFlags.Ephemeral
+			});
+		} catch (err) {
+			console.log(`error handling info command: ${err}`);
+		}
+		return;
+	}
+
 	if (!interaction.isButton()) return;
 
 	const [action, ownerId] = interaction.customId.split(':');
